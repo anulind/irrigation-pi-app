@@ -17,7 +17,14 @@ Add an `.env`-file to the root of the project to set environment variables (see 
 There are some handy shortcuts in the `scripts`-folder:
 
 * `sh ./scripts/setup.sh` — install python dependencies
-* `sh ./scripts/test.sh` — run `test.py`-file (note: also kills main thread)
+
+To run tests, give the name of the test-file as an argument:
+
+* `sh ./scripts/test.sh mqtt` — runs `./tests/mqtt.py`
+* `sh ./scripts/test.sh AM2320` — runs `./tests/AM2320.py`
+* ... and so on
+
+Note: running tests also kills main thread.
 
 ## API
 

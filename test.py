@@ -1,11 +1,16 @@
-import mqtt
+import unittest
+import sys
+import importlib
 
-# Test MQTT connection
-print('Connecting to MQTT...')
-client = mqtt.connect()
-print('Publishing messages...')
-client.publish('AM2320', '{"humidity":98.0,"temperature":13.1}')
-client.publish('BMP280', '{"pressure":101.2,"temperature":12.9}')
-client.publish('TSL2561', '{"light":10.0}')
-print('Messages published')
-client.loop_forever()
+test = importlib.import_module("tests." + sys.argv[1])
+
+# initialize the test suite
+loader = unittest.TestLoader()
+suite = unittest.TestSuite()
+
+# add tests to the test suite
+suite.addTests(loader.loadTestsFromModule(test))
+
+# initialize a runner, pass it your suite and run it
+runner = unittest.TextTestRunner(verbosity=3)
+result = runner.run(suite)
