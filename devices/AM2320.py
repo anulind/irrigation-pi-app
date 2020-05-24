@@ -1,7 +1,6 @@
 import board
 import busio
 import adafruit_am2320
-from random import random
 
 # Humidity and temperature sensor
 class AM2320:

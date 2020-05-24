@@ -2,4 +2,4 @@
 screen -X -S irrigation_system quit
 
 # Run test file
-python3 "./test.py" $1
+python3 "./test.py" $1 $2

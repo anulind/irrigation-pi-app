@@ -26,6 +26,12 @@ To run tests, give the name of the test-file as an argument:
 
 Note: running tests also kills main thread.
 
+For `MCP23017`, pin must be specified when running the test:
+
+* `sh ./scripts/test.sh MCP23017 pow1`
+* `sh ./scripts/test.sh MCP23017 pump1`
+* `sh ./scripts/test.sh MCP23017 watertank_level`
+
 ## API
 
 Each device publishes values on its own topic in the following format:
