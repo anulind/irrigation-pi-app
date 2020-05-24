@@ -7,3 +7,4 @@ pip3 install --upgrade RPI.GPIO
 pip3 install --upgrade adafruit-blinka
 pip3 install --upgrade adafruit-circuitpython-am2320
 pip3 install --upgrade adafruit-circuitpython-bmp280
+pip3 install --upgrade adafruit-circuitpython-tsl2561

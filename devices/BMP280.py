@@ -12,13 +12,13 @@ class BMP280:
 
     def read(self):
         print("[BMP280] reading sensor")
-        temperature = round(self.sensor.temperature, 2)
-        pressure = round(self.sensor.pressure, 2)
+        temperature = self.sensor.temperature
+        pressure = self.sensor.pressure
 
         print("[BMP280] temperature = {}".format(temperature))
         print("[BMP280] pressure = {}".format(pressure))
 
         return {
-            'temperature': temperature,
-            'pressure': pressure
+            'temperature': round(temperature, 2),
+            'pressure': round(pressure, 2)
         }
