@@ -1,6 +1,6 @@
 import board
 import busio
-import adafruit_mcp230xx
+from adafruit_mcp230xx.mcp23017 import MCP23017 as adafruit_MCP23017
 import time
 
 pins = {
@@ -16,7 +16,7 @@ class MCP23017:
     def __init__(self):
         print("[MCP23017] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)
-        self.sensor = adafruit_mcp230xx.MCP23017(i2c)
+        self.sensor = adafruit_MCP23017(i2c)
         for _, setup in pins.items():
             pin = self.sensor.get_pin(setup['pin'])
             # Set pin as output
