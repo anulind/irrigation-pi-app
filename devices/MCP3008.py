@@ -4,7 +4,7 @@ import board
 import busio
 import adafruit_mcp3xxx
 from adafruit_mcp3xxx.mcp3008 import MCP3008 as adafruit_MCP3008
-import adafruit_bitbangio as bitbangio
+import lib.bitbangio as bitbangio
 
 pins = {
     'soil_moisture1': {'pin': 3},
@@ -29,13 +29,6 @@ class MCP3008:
         mosi = mcp23017.sensor.get_pin(mosi_pin)
         cs = mcp23017.sensor.get_pin(cs_pin)
         cs.switch_to_output(value=False)
-
-        # Ugly trick to be able to use MCP23017 pins with bitbangio.SPI
-        # digitalio.DigitalInOut calls pin.id in the constructor, but MCP23017.DigitalInOut
-        # pins don't have that property...
-        clk.id = clk_pin
-        miso.id = miso_pin
-        mosi.id = mosi_pin
 
         spi = bitbangio.SPI(clk, MOSI=mosi, MISO=miso)
         self.sensor = adafruit_MCP3008(spi, cs)

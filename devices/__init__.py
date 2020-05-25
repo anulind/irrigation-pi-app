@@ -17,7 +17,6 @@ class Devices:
     def disconnect(self):
         self.HCSR04.cleanup()
         self.MCP23017.disconnect()
-        self.MCP3008.disconnect()
 
 def init():
     return Devices()
