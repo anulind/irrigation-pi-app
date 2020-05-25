@@ -12,7 +12,7 @@ class AM2320:
 
     def read(self):
         print("[AM2320] reading sensor")
-        temperature = self.sensor.temperature,
+        temperature = self.sensor.temperature
         humidity = self.sensor.relative_humidity
 
         print("[AM2320] temperature = {}".format(temperature))
