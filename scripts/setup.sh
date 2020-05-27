@@ -11,3 +11,4 @@ pip3 install --upgrade adafruit-circuitpython-tsl2561
 pip3 install --upgrade adafruit-circuitpython-mcp230xx
 pip3 install --upgrade adafruit-circuitpython-mcp3xxx
 pip3 install --upgrade schedule
+pip3 install --upgrade pytz
