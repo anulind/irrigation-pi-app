@@ -5,7 +5,6 @@ import pytz
 def build_message(timestamp, data, key):
     return json_dumps({
         'timestamp': timestamp,
-        'triggeredBy': "pi",
         'data': data[key],
     })
 
@@ -15,9 +14,9 @@ def run(devices, mqtt):
 
     try:
         reading = devices.AM2320.read()
-        mqtt.publish('pi/AM2320/data/humidity',
+        mqtt.publish('pi/sensors/AM2320/humidity',
                     build_message(timestamp, reading, 'humidity'))
-        mqtt.publish('pi/AM2320/data/temperature',
+        mqtt.publish('pi/sensors/AM2320/temperature',
                     build_message(timestamp, reading, 'temperature'))
     except Exception as inst:
         print("[periodic reading]: AM2320 failed")
@@ -27,9 +26,9 @@ def run(devices, mqtt):
 
     try:
         reading = devices.BMP280.read()
-        mqtt.publish('pi/BMP280/data/pressure',
+        mqtt.publish('pi/sensors/BMP280/pressure',
                     build_message(timestamp, reading, 'pressure'))
-        mqtt.publish('pi/BMP280/data/temperature',
+        mqtt.publish('pi/sensors/BMP280/temperature',
                     build_message(timestamp, reading, 'temperature'))
     except Exception as inst:
         print("[periodic reading]: BMP280 failed")
@@ -39,7 +38,7 @@ def run(devices, mqtt):
 
     try:
         reading = devices.TSL2561.read()
-        mqtt.publish('pi/TSL2561/data/light',
+        mqtt.publish('pi/sensors/TSL2561/light',
                     build_message(timestamp, reading, 'light'))
     except Exception as inst:
         print("[periodic reading]: TSL2561 failed")
