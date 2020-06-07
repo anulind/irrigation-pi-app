@@ -3,6 +3,7 @@ from config import MQTT_HOST, MQTT_PORT
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
+    client.subscribe('pi/requests')
 
 def connect():
     client = paho_client.Client()

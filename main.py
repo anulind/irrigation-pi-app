@@ -3,6 +3,7 @@ import time
 import schedule
 import devices
 from worker import Worker
+import json
 
 def main_loop():
     # Set up devices
@@ -16,6 +17,20 @@ def main_loop():
 
     def periodic_reading():
         queue.append("periodic_reading")
+
+    def handle_request(client, userdata, message):
+        try:
+            payload = json.loads(message.payload)
+            queue.append("handle_request", payload)
+        except Exception as inst:
+            print('Something wrong with incoming request, ignoring...')
+            print(message)
+            print(type(inst))
+            print(inst.args)
+            print(inst)
+
+    # Handle incoming requests
+    client.message_callback_add("pi/requests", handle_request)
 
     # Scheduled jobs
     schedule.every(15 * 60).seconds.do(periodic_reading)
