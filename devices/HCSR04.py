@@ -14,7 +14,6 @@ class HCSR04:
         print("[HCSR04] configuration complete")
 
     def read(self):
-        print("[HCSR04] reading sensor")
         # Number of attempts to read sensor before giving up
         n = 20
         # Number of nonzero readings that we want to get
@@ -23,21 +22,21 @@ class HCSR04:
         k = 5
 
         result = []
+        print("[HCSR04] reading sensor:", end=' ')
         for _ in range(0, n):
             try:
                 value = self._raw_read()
-                print("[HCSR04] got reading: {}".format(value))
-                time.sleep(0.5)
+                print(value, end=' ')
                 if value > 0:
                     result.append(value)
                 if len(result) >= m:
                     break
+                time.sleep(0.5)
 
-            except Exception as inst:
-                print('[HCSR04] failed to read sensor, retrying...')
-                print(type(inst))
-                print(inst.args)
-                print(inst)
+            except Exception:
+                print('fail', end=' ')
+
+        print('')
 
         # If we didn't get enough nonzero readings
         if len(result) < k:

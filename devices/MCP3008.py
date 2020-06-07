@@ -6,13 +6,13 @@ import adafruit_mcp3xxx
 from adafruit_mcp3xxx.mcp3008 import MCP3008 as adafruit_MCP3008
 import lib.bitbangio as bitbangio
 
-pins = {
-    'soil_moisture1': {'pin': 3},
-    'soil_moisture2': {'pin': 4},
-    'soil_moisture3': {'pin': 5},
-    'soil_moisture4': {'pin': 6},
-    'temperature':    {'pin': 7},
-}
+pins = [
+    {'pin': 3, 'name': 'soil_moisture_1'},
+    {'pin': 4, 'name': 'soil_moisture_2'},
+    {'pin': 5, 'name': 'soil_moisture_3'},
+    {'pin': 6, 'name': 'soil_moisture_4'},
+    {'pin': 7, 'name': 'temperature'},
+]
 
 class MCP3008:
     def __init__(self, mcp23017):
@@ -32,7 +32,20 @@ class MCP3008:
 
         spi = bitbangio.SPI(clk, MOSI=mosi, MISO=miso)
         self.sensor = adafruit_MCP3008(spi, cs)
+
+        # Helpers
+        self.pins_by_name = {}
+        self.pins_by_number = {}
+
+        for setup in pins:
+            self.pins_by_number[setup.get('pin')] = setup
+            self.pins_by_name[setup.get('name')] = setup
+
         print("[MCP3008] configuration complete")
+
+    def get_pin_info(self, id):
+        setup = self.pins_by_name[id] if isinstance(id, str) else self.pins_by_number[id]
+        return setup.get('pin'), setup.get('name')
 
     def read(self, id):
         print("[MCP3008] reading sensor {}".format(id))
@@ -43,41 +56,42 @@ class MCP3008:
         # Number of nonzero readings that's good enough
         k = 5
 
-        pin = pins[id]['pin']
+        pin_number, pin_name = self.get_pin_info(id)
 
         result = []
+
+        print("[MCP3008] reading pin {}:".format(pin_name), end=' ')
         for _ in range(0, n):
             try:
-                value = self.sensor.read(pin)
-                print("[MCP3008] got reading from pin {}: {}".format(pin, value))
-                time.sleep(0.5)
+                value = self.sensor.read(pin_number)
+                print(value, end=' ')
                 if value > 0:
                     result.append(value)
                 if len(result) >= m:
                     break
+                time.sleep(0.5)
 
-            except Exception as inst:
-                print("[MCP3008] failed to read pin {}, retrying...".format(pin))
-                print(type(inst))
-                print(inst.args)
-                print(inst)
+            except Exception:
+                print('fail', end=' ')
+
+        print('')
 
         # If we didn't get enough nonzero readings
         if len(result) < k:
-            print("Error: Got {} nonzero readings from MCP3008 pin {}".format(len(result), pin))
-            raise Exception("Could not read MCP3008 pin {}".format(pin))
+            print("Error: Got {} nonzero readings from MCP3008 pin {}".format(len(result), pin_name))
+            raise Exception("Could not read MCP3008 pin {}".format(pin_name))
 
         # Calculate average
         value = sum(result)/len(result)
 
         # Temperature conversion
-        if id == "temperature":
+        if pin_name == "temperature":
             value = self.convert_temperature(value)
 
-        print("[MCP3008] pin {} value = {}".format(pin, value))
+        print("[MCP3008] pin {} value = {}".format(pin_name, value))
 
         return {
-            id: value
+            pin_name: value
         }
 
     def convert_temperature(self, value):
