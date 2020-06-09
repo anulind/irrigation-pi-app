@@ -2,8 +2,9 @@ import board
 import busio
 import adafruit_tsl2561
 import time
+import devices.mqtt_methods as mqtt_methods
 
-class TSL2561:
+class TSL2561(mqtt_methods.Mixin):
     def __init__(self):
         print("[TSL2561] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)

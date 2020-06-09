@@ -25,7 +25,9 @@ class TestMCP23017(unittest.TestCase):
         self.MCP23017.disconnect()
 
     def _pump(self, id):
-        self.MCP23017.run(id, {'duration': 5})
+        self.MCP23017.set_value(id, 1)
+        time.sleep(5)
+        self.MCP23017.set_value(id, 0)
 
     def _pow1(self):
         self.MCP23017.set_value('pow1', 1)

@@ -2,6 +2,7 @@ import board
 import busio
 from adafruit_mcp230xx.mcp23017 import MCP23017 as adafruit_MCP23017
 import time
+import devices.mqtt_methods as mqtt_methods
 
 pins = [
     {'pin': 9,  'name': 'pow1',            'output': True},
@@ -12,7 +13,7 @@ pins = [
     {'pin': 7,  'name': 'watertank_empty', 'output': False},
 ]
 
-class MCP23017:
+class MCP23017(mqtt_methods.Mixin):
     def __init__(self):
         print("[MCP23017] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)
@@ -36,6 +37,10 @@ class MCP23017:
                 pin.switch_to_output(value=False)
         print("[MCP23017] configuration complete")
 
+    def get_pin_info(self, id):
+        setup = self.pins_by_name[id] if isinstance(id, str) else self.pins_by_number[id]
+        return setup.get('pin'), setup.get('name')
+
     # Get pin by human readable id or pin number
     def get_pin(self, id):
         if isinstance(id, str):
@@ -44,42 +49,19 @@ class MCP23017:
 
     def read(self, id):
         print("[MCP23017] reading pin {}".format(id))
-        pin = self.get_pin(id)
+        pin_number, pin_name = self.get_pin_info(id)
+        pin = self.sensor.get_pin(pin_number)
         value = pin.value
         print("[MCP23017] pin {} = {}".format(id, value))
-        return value
+        return {
+            pin_name: value
+        }
 
     def set_value(self, id, target):
         print("[MCP23017] setting pin {} to {}".format(id, target))
         pin = self.get_pin(id)
         pin.value = target
         print("[MCP23017] target set")
-
-    def run(self, id, payload):
-        print("[MCP23017] running pump {} with payload {}".format(id, payload))
-
-        # Validate duration
-        max_duration = 30
-        duration = payload.get('duration', None)
-        if not isinstance(duration, int):
-            raise ValueError("Duration must be integer (given: {})".format(duration))
-        if duration > max_duration:
-            raise ValueError("Duration can be at most {}".format(max_duration))
-        if duration < 1:
-            raise ValueError("Duration must be at least 1")
-
-        # Turn relay on
-        self.set_value(id, 1)
-        # Wait for `duration` seconds
-        print("[MCP23017] pump {} turned on, sleeping for {} seconds".format(id, duration))
-        time.sleep(duration)
-        # Check if pump is on
-        status = self.read(id)
-        if status == 0:
-            raise Exception("Failed to run pump - could not turn on relay or job cancelled")
-        # Turn relay off
-        self.set_value(id, 0)
-        print("[MCP23017] job complete")
 
     def disconnect(self):
         print("[MCP23017] disconnecting device")

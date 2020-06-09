@@ -1,7 +1,8 @@
 import RPi.GPIO as GPIO
 import time
+import devices.mqtt_methods as mqtt_methods
 
-class HCSR04:
+class HCSR04(mqtt_methods.Mixin):
     def __init__(self):
         print("[HCSR04] Initializing sensor...")
         self.GPIO = GPIO

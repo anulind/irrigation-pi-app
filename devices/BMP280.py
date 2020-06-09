@@ -1,8 +1,9 @@
 import board
 import busio
 import adafruit_bmp280
+import devices.mqtt_methods as mqtt_methods
 
-class BMP280:
+class BMP280(mqtt_methods.Mixin):
     def __init__(self):
         print("[BMP280] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)

@@ -7,17 +7,17 @@ class Mixin:
         timestamp = datetime.now(pytz.timezone('Europe/Stockholm'))
 
         try:
-            self.read_and_publish('AM2320', timestamp=timestamp)
+            self.devices.AM2320.read_and_publish(self.mqtt, timestamp=timestamp)
         except Exception as inst:
             self.print_error(inst, "[periodic reading]: AM2320 failed")
 
         try:
-            self.read_and_publish('BMP280', timestamp=timestamp)
+            self.devices.BMP280.read_and_publish(self.mqtt, timestamp=timestamp)
         except Exception as inst:
             self.print_error(inst, "[periodic reading]: BMP280 failed")
 
         try:
-            self.read_and_publish('TSL2561', timestamp=timestamp)
+            self.devices.TSL2561.read_and_publish(self.mqtt, timestamp=timestamp)
         except Exception as inst:
             self.print_error(inst, "[periodic reading]: TSL2561 failed")
 

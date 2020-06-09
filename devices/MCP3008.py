@@ -5,6 +5,7 @@ import busio
 import adafruit_mcp3xxx
 from adafruit_mcp3xxx.mcp3008 import MCP3008 as adafruit_MCP3008
 import lib.bitbangio as bitbangio
+import devices.mqtt_methods as mqtt_methods
 
 pins = [
     {'pin': 3, 'name': 'soil_moisture_1'},
@@ -14,7 +15,7 @@ pins = [
     {'pin': 7, 'name': 'temperature'},
 ]
 
-class MCP3008:
+class MCP3008(mqtt_methods.Mixin):
     def __init__(self, mcp23017):
         print("[MCP3008] Initializing sensor...")
 

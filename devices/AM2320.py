@@ -1,9 +1,10 @@
 import board
 import busio
 import adafruit_am2320
+import devices.mqtt_methods as mqtt_methods
 
 # Humidity and temperature sensor
-class AM2320:
+class AM2320(mqtt_methods.Mixin):
     def __init__(self):
         print("[AM2320] Initializing sensor...")
         self.i2c = busio.I2C(board.SCL, board.SDA)
