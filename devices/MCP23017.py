@@ -11,6 +11,10 @@ pins = [
     {'pin': 13, 'name': 'pump3',           'output': True},
     {'pin': 15, 'name': 'pump4',           'output': True},
     {'pin': 7,  'name': 'watertank_empty', 'output': False},
+    {'pin': 5,  'name': 'clk',             'output': False},
+    {'pin': 4,  'name': 'miso',            'output': False},
+    {'pin': 2,  'name': 'mosi',            'output': False},
+    {'pin': 3,  'name': 'cs',              'output': True},
 ]
 
 class MCP23017(mqtt_methods.Mixin):

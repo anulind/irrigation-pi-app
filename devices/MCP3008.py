@@ -20,16 +20,10 @@ class MCP3008(mqtt_methods.Mixin):
         print("[MCP3008] Initializing sensor...")
 
         # spi configuration
-        clk_pin = 5
-        miso_pin = 4
-        mosi_pin = 2
-        cs_pin = 3
-
-        clk = mcp23017.sensor.get_pin(clk_pin)
-        miso = mcp23017.sensor.get_pin(miso_pin)
-        mosi = mcp23017.sensor.get_pin(mosi_pin)
-        cs = mcp23017.sensor.get_pin(cs_pin)
-        cs.switch_to_output(value=False)
+        clk = mcp23017.get_pin('clk')
+        miso = mcp23017.get_pin('miso')
+        mosi = mcp23017.get_pin('mosi')
+        cs = mcp23017.get_pin('cs')
 
         spi = bitbangio.SPI(clk, MOSI=mosi, MISO=miso)
         self.sensor = adafruit_MCP3008(spi, cs)
