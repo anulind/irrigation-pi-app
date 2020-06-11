@@ -15,8 +15,14 @@ class Mixin:
             }))
 
             if action == "read":
-                device = getattr(self.devices, payload['device'])
-                device.read_and_publish(self.mqtt, pin=payload.get('pin'), origin=requestId)
+                device_name = payload.get('device')
+                if device_name:
+                    device = getattr(self.devices, device_name)
+                    device.read_and_publish(self.mqtt, pin=payload.get('pin'), origin=requestId)
+                else:
+                    # If device not specified, get new values for everything
+                    self.read_sensors()
+
                 self.mqtt.publish(event_topic, json_dumps({
                     **message,
                     "status": "completed",
