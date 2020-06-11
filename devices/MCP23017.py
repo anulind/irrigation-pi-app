@@ -71,10 +71,10 @@ class MCP23017(mqtt_methods.Mixin):
         print("[MCP23017] disconnecting device")
         # Make sure all relays are off
         for setup in pins:
-            if setup['output']:
+            if setup['output'] and setup['name'] != 'cs':
                 try:
                     # Check if relay is already off
-                    status = self.read(setup['name'])
+                    status = self.read(setup['name'])[setup['name']]
                     # If not, try to turn it off
                     if status == 1:
                         self.set_value(setup['name'], 0)

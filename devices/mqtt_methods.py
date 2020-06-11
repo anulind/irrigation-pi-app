@@ -20,6 +20,7 @@ class Mixin:
 
     def read_and_publish(self, mqtt, pin=None, timestamp=None, origin=None):
         print("[mqtt mixin]: reading sensor")
+
         # If pin is given, send it as an argument
         reading = self.read(pin) if pin else self.read()
 
@@ -75,7 +76,7 @@ class Mixin:
         time.sleep(duration)
 
         # Check that relay is on
-        status = self.read(pin)
+        status = self.read(pin)[pin]
         if status == 0:
             raise Exception("Failed to complete task - could not turn on relay or job cancelled")
 
