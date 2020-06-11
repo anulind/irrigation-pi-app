@@ -18,5 +18,8 @@ class Devices:
         self.HCSR04.cleanup()
         self.MCP23017.disconnect()
 
+    def close_relays(self):
+        self.MCP23017.disconnect()
+
 def init():
     return Devices()

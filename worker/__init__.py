@@ -1,11 +1,11 @@
 import queue
 import pytz
-import worker.periodic_reading as periodic_reading
+import worker.read_sensors as read_sensors
 import worker.handle_request as handle_request
 from datetime import datetime
 from utils import json_dumps
 
-class Worker(periodic_reading.Mixin, handle_request.Mixin):
+class Worker(read_sensors.Mixin, handle_request.Mixin):
     def __init__(self, devices, mqtt):
         self.queue = queue.Queue()
         self.devices = devices
@@ -22,16 +22,20 @@ class Worker(periodic_reading.Mixin, handle_request.Mixin):
         # Remove any future jobs
         with self.queue.mutex:
             self.queue.queue.clear()
+        # Interrupt any ongoing processes
+        self.devices.close_relays()
 
     def work(self):
         try:
             job = self.queue.get(False)
             name = job["name"]
 
-            if name == "periodic_reading":
-                self.periodic_reading()
+            if name == "read_sensors":
+                self.read_sensors()
+                self.devices.close_relays()
             elif name == "handle_request":
                 self.handle_request(job["payload"])
+                self.devices.close_relays()
             else:
                 print("Task '{}' not recongnised, ignoring...".format(name))
                 return
