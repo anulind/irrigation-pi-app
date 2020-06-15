@@ -55,7 +55,7 @@ class MCP23017(mqtt_methods.Mixin):
         print("[MCP23017] reading pin {}".format(id))
         pin_number, pin_name = self.get_pin_info(id)
         pin = self.sensor.get_pin(pin_number)
-        value = pin.value
+        value = int(pin.value == True)
         print("[MCP23017] pin {} = {}".format(id, value))
         return {
             pin_name: value
