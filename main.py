@@ -79,7 +79,10 @@ def main_loop():
     finally:
         if d:
             print('Shutting down gracefully...')
-            d.disconnect()
+            if client:
+                d.disconnect(client)
+            else:
+                d.disconnect()
         if client:
             print('Killing MQTT thread...')
             client.loop_stop()

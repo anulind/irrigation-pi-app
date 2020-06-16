@@ -14,12 +14,12 @@ class Devices:
         self.MCP23017 = MCP23017()
         self.MCP3008 = MCP3008(self.MCP23017)
 
-    def disconnect(self):
+    def disconnect(self, mqtt=None):
         self.HCSR04.cleanup()
-        self.MCP23017.disconnect()
+        self.MCP23017.disconnect(mqtt)
 
-    def close_relays(self):
-        self.MCP23017.disconnect()
+    def close_relays(self, mqtt=None):
+        self.MCP23017.disconnect(mqtt)
 
 def init():
     return Devices()

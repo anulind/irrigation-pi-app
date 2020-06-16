@@ -23,7 +23,7 @@ class Worker(read_sensors.Mixin, handle_request.Mixin):
         with self.queue.mutex:
             self.queue.queue.clear()
         # Interrupt any ongoing processes
-        self.devices.close_relays()
+        self.devices.close_relays(self.mqtt)
 
     def work(self):
         try:
@@ -32,10 +32,10 @@ class Worker(read_sensors.Mixin, handle_request.Mixin):
 
             if name == "read_sensors":
                 self.read_sensors()
-                self.devices.close_relays()
+                self.devices.close_relays(self.mqtt)
             elif name == "handle_request":
                 self.handle_request(job["payload"])
-                self.devices.close_relays()
+                self.devices.close_relays(self.mqtt)
             else:
                 print("Task '{}' not recongnised, ignoring...".format(name))
                 return

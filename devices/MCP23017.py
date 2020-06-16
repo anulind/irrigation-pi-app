@@ -67,7 +67,7 @@ class MCP23017(mqtt_methods.Mixin):
         pin.value = target
         print("[MCP23017] target set")
 
-    def disconnect(self):
+    def disconnect(self, mqtt=None):
         print("[MCP23017] disconnecting device")
         # Make sure all relays are off
         for setup in pins:
@@ -77,7 +77,10 @@ class MCP23017(mqtt_methods.Mixin):
                     status = self.read(setup['name'])[setup['name']]
                     # If not, try to turn it off
                     if status == 1:
-                        self.set_value(setup['name'], 0)
+                        if mqtt:
+                            self.set_and_publish(mqtt, setup['name'], 0, origin="disconnect")
+                        else:
+                            self.set_value(setup['name'], 0)
                         print("Relay {} off".format(setup['name']))
                 except Exception as inst:
                     print("Failed to make sure pin {} is off".format(setup['name']))
