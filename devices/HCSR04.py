@@ -1,10 +1,11 @@
 import RPi.GPIO as GPIO
 import time
 import devices.mqtt_methods as mqtt_methods
+import logging
 
 class HCSR04(mqtt_methods.Mixin):
     def __init__(self):
-        print("[HCSR04] Initializing sensor...")
+        logging.debug("[HCSR04] Initializing sensor...")
         self.GPIO = GPIO
         GPIO.setmode(GPIO.BCM)
         self.TRIG = 23
@@ -12,7 +13,7 @@ class HCSR04(mqtt_methods.Mixin):
         GPIO.setup(self.TRIG, GPIO.OUT)
         GPIO.setup(self.ECHO, GPIO.IN)
         GPIO.output(self.TRIG, False)
-        print("[HCSR04] configuration complete")
+        logging.debug("[HCSR04] configuration complete")
 
     def read(self):
         # Number of attempts to read sensor before giving up
@@ -23,11 +24,11 @@ class HCSR04(mqtt_methods.Mixin):
         k = 5
 
         result = []
-        print("[HCSR04] reading sensor:", end=' ')
+        logging.debug("[HCSR04] reading sensor:")
         for _ in range(0, n):
             try:
                 value = self._raw_read()
-                print(value, end=' ')
+                logging.debug(">>>> {}".format(value))
                 if value > 0:
                     result.append(value)
                 if len(result) >= m:
@@ -35,18 +36,15 @@ class HCSR04(mqtt_methods.Mixin):
                 time.sleep(0.5)
 
             except Exception:
-                print('fail', end=' ')
-
-        print('')
+                logging.exception(">>>> [HCSR04] fail")
 
         # If we didn't get enough nonzero readings
         if len(result) < k:
-            print("Error: Got {} nonzero readings from HCSR04".format(len(result)))
-            raise Exception("Could not read HCSR04")
+            raise Exception("Got {} nonzero readings from HCSR04".format(len(result)))
 
         # Calculate average
         value = sum(result)/len(result)
-        print("[HCSR04] range = {}".format(value))
+        logging.debug("[HCSR04] range = {}".format(value))
 
         return {
             'range': value

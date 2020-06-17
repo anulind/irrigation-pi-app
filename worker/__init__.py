@@ -4,6 +4,7 @@ import worker.read_sensors as read_sensors
 import worker.handle_request as handle_request
 from datetime import datetime
 from utils import json_dumps
+import logging
 
 class Worker(read_sensors.Mixin, handle_request.Mixin):
     def __init__(self, devices, mqtt):
@@ -37,14 +38,12 @@ class Worker(read_sensors.Mixin, handle_request.Mixin):
                 self.handle_request(job["payload"])
                 self.devices.close_relays(self.mqtt)
             else:
-                print("Task '{}' not recongnised, ignoring...".format(name))
+                logging.error("Task '{}' not recongnised, ignoring...".format(name))
                 return
 
         except queue.Empty:
             return
 
     def print_error(self, e, message):
-        print(message)
-        print(type(e))
-        print(e.args)
-        print(e)
+        logging.warning(message)
+        logging.warning(e, exc_info=True)

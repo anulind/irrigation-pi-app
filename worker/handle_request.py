@@ -1,4 +1,5 @@
 from utils import json_dumps
+import logging
 
 event_topic = 'pi/events'
 
@@ -8,7 +9,7 @@ class Mixin:
             action = message.get('action')
             requestId = message.get('requestId')
             payload = message.get('payload')
-            print("[handle request]: processing request id = {}, action = {}, payload = {}".format(requestId, action, payload))
+            logging.debug("[handle request]: processing request id = {}, action = {}, payload = {}".format(requestId, action, payload))
             self.mqtt.publish(event_topic, json_dumps({
                 **message,
                 "status": "initiated",
@@ -55,7 +56,7 @@ class Mixin:
                 }))
 
             else:
-                print("[handle request]: Request {} not recognized".format(action))
+                logging.warning("[handle request]: Request {} not recognized".format(action))
                 self.mqtt.publish(event_topic, json_dumps({
                     **message,
                     "status": "rejected",
@@ -63,14 +64,12 @@ class Mixin:
                 }))
 
         except Exception as e:
-            print("[handle request]: unexpected error occured")
-            print(type(e))
-            print(e.args)
-            print(e)
+            logging.warning("[handle request]: unexpected error occured")
+            logging.warning(e, exc_info=True)
             self.mqtt.publish(event_topic, json_dumps({
                 **message,
                 "status": "failed",
                 "message": str(e),
             }))
 
-        print("[handle request]: job done")
+        logging.debug("[handle request]: job done")

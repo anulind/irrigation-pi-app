@@ -17,8 +17,6 @@ class TestMCP23017(unittest.TestCase):
 
         if pin in ['pump1', 'pump2', 'pump3', 'pump4']:
             self._pump(pin)
-        elif pin == 'pow1':
-            self._pow1()
         elif pin == 'watertank_empty':
             self._watertank()
 
@@ -28,11 +26,6 @@ class TestMCP23017(unittest.TestCase):
         self.MCP23017.set_value(id, 1)
         time.sleep(5)
         self.MCP23017.set_value(id, 0)
-
-    def _pow1(self):
-        self.MCP23017.set_value('pow1', 1)
-        time.sleep(5)
-        self.MCP23017.set_value('pow1', 0)
 
     def _watertank(self):
         status = self.MCP23017.read('watertank_empty')

@@ -6,6 +6,7 @@ import adafruit_mcp3xxx
 from adafruit_mcp3xxx.mcp3008 import MCP3008 as adafruit_MCP3008
 import lib.bitbangio as bitbangio
 import devices.mqtt_methods as mqtt_methods
+import logging
 
 pins = [
     {'pin': 3, 'name': 'soil_moisture_1'},
@@ -17,7 +18,7 @@ pins = [
 
 class MCP3008(mqtt_methods.Mixin):
     def __init__(self, mcp23017):
-        print("[MCP3008] Initializing sensor...")
+        logging.debug("[MCP3008] Initializing sensor...")
 
         # spi configuration
         clk = mcp23017.get_pin('clk')
@@ -36,14 +37,14 @@ class MCP3008(mqtt_methods.Mixin):
             self.pins_by_number[setup.get('pin')] = setup
             self.pins_by_name[setup.get('name')] = setup
 
-        print("[MCP3008] configuration complete")
+        logging.debug("[MCP3008] configuration complete")
 
     def get_pin_info(self, id):
         setup = self.pins_by_name[id] if isinstance(id, str) else self.pins_by_number[id]
         return setup.get('pin'), setup.get('name')
 
     def read(self, id):
-        print("[MCP3008] reading sensor {}".format(id))
+        logging.debug("[MCP3008] reading sensor {}".format(id))
         # Number of attempts to read sensor before giving up
         n = 20
         # Number of nonzero readings that we want to get
@@ -55,11 +56,11 @@ class MCP3008(mqtt_methods.Mixin):
 
         result = []
 
-        print("[MCP3008] reading pin {}:".format(pin_name), end=' ')
+        logging.debug("[MCP3008] reading pin {}:".format(pin_name))
         for _ in range(0, n):
             try:
                 value = self.sensor.read(pin_number)
-                print(value, end=' ')
+                logging.debug(">>>> {}".format(value))
                 if value > 0:
                     result.append(value)
                 if len(result) >= m:
@@ -67,14 +68,11 @@ class MCP3008(mqtt_methods.Mixin):
                 time.sleep(0.5)
 
             except Exception:
-                print('fail', end=' ')
-
-        print('')
+                logging.exception(">>>> [MCP3008] fail")
 
         # If we didn't get enough nonzero readings
         if len(result) < k:
-            print("Error: Got {} nonzero readings from MCP3008 pin {}".format(len(result), pin_name))
-            raise Exception("Could not read MCP3008 pin {}".format(pin_name))
+            raise Exception("Got {} nonzero readings from MCP3008 pin {}".format(len(result), pin_name))
 
         # Calculate average
         value = sum(result)/len(result)
@@ -83,7 +81,7 @@ class MCP3008(mqtt_methods.Mixin):
         if pin_name == "temperature":
             value = self.convert_temperature(value)
 
-        print("[MCP3008] pin {} value = {}".format(pin_name, value))
+        logging.debug("[MCP3008] pin {} value = {}".format(pin_name, value))
 
         return {
             pin_name: value

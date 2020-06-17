@@ -1,5 +1,6 @@
 import pytz
 from datetime import datetime
+import logging
 
 class Mixin:
     def read_sensor(self, device, pin=None, timestamp=None, origin=None):
@@ -14,7 +15,7 @@ class Mixin:
             self.print_error(inst, "[worker]: {} failed".format(device))
 
     def read_sensors(self, origin=None):
-        print("[worker]: reading sensors...")
+        logging.debug("[worker]: reading sensors...")
         timestamp = datetime.now(pytz.timezone('Europe/Stockholm'))
 
         sensors = [

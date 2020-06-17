@@ -3,9 +3,9 @@ import busio
 from adafruit_mcp230xx.mcp23017 import MCP23017 as adafruit_MCP23017
 import time
 import devices.mqtt_methods as mqtt_methods
+import logging
 
 pins = [
-    {'pin': 9,  'name': 'pow1',            'output': True},
     {'pin': 9,  'name': 'pump1',           'output': True},
     {'pin': 11, 'name': 'pump2',           'output': True},
     {'pin': 13, 'name': 'pump3',           'output': True},
@@ -19,7 +19,7 @@ pins = [
 
 class MCP23017(mqtt_methods.Mixin):
     def __init__(self):
-        print("[MCP23017] Initializing sensor...")
+        logging.debug("[MCP23017] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)
         self.sensor = adafruit_MCP23017(i2c)
 
@@ -39,7 +39,7 @@ class MCP23017(mqtt_methods.Mixin):
             # Set pin as output
             if setup['output']:
                 pin.switch_to_output(value=False)
-        print("[MCP23017] configuration complete")
+        logging.debug("[MCP23017] configuration complete")
 
     def get_pin_info(self, id):
         setup = self.pins_by_name[id] if isinstance(id, str) else self.pins_by_number[id]
@@ -52,23 +52,23 @@ class MCP23017(mqtt_methods.Mixin):
         return self.sensor.get_pin(id)
 
     def read(self, id):
-        print("[MCP23017] reading pin {}".format(id))
+        logging.debug("[MCP23017] reading pin {}".format(id))
         pin_number, pin_name = self.get_pin_info(id)
         pin = self.sensor.get_pin(pin_number)
         value = int(pin.value == True)
-        print("[MCP23017] pin {} = {}".format(id, value))
+        logging.debug("[MCP23017] pin {} = {}".format(id, value))
         return {
             pin_name: value
         }
 
     def set_value(self, id, target):
-        print("[MCP23017] setting pin {} to {}".format(id, target))
+        logging.debug("[MCP23017] setting pin {} to {}".format(id, target))
         pin = self.get_pin(id)
         pin.value = target
-        print("[MCP23017] target set")
+        logging.debug("[MCP23017] target set")
 
     def disconnect(self, mqtt=None):
-        print("[MCP23017] disconnecting device")
+        logging.debug("[MCP23017] disconnecting device")
         # Make sure all relays are off
         for setup in pins:
             if setup['output'] and setup['name'] != 'cs':
@@ -81,10 +81,8 @@ class MCP23017(mqtt_methods.Mixin):
                             self.set_and_publish(mqtt, setup['name'], 0, origin="disconnect")
                         else:
                             self.set_value(setup['name'], 0)
-                        print("Relay {} off".format(setup['name']))
-                except Exception as inst:
-                    print("Failed to make sure pin {} is off".format(setup['name']))
-                    print(type(inst))
-                    print(inst.args)
-                    print(inst)
-        print("[MCP23017] disconnected")
+                        logging.info("Relay {} off".format(setup['name']))
+                except Exception as e:
+                    logging.error("Failed to make sure pin {} is off".format(setup['name']))
+                    logging.error(e, exc_info=True)
+        logging.debug("[MCP23017] disconnected")

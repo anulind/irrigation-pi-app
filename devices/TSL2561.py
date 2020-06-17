@@ -3,10 +3,11 @@ import busio
 import adafruit_tsl2561
 import time
 import devices.mqtt_methods as mqtt_methods
+import logging
 
 class TSL2561(mqtt_methods.Mixin):
     def __init__(self):
-        print("[TSL2561] Initializing sensor...")
+        logging.debug("[TSL2561] Initializing sensor...")
         i2c = busio.I2C(board.SCL, board.SDA)
         # Create the TSL2561 instance, passing in the I2C bus
         self.sensor = adafruit_tsl2561.TSL2561(i2c)
@@ -20,10 +21,10 @@ class TSL2561(mqtt_methods.Mixin):
         # Set integration time (0=13.7ms, 1=101ms, 2=402ms, or 3=manual)
         self.sensor.integration_time = 1
 
-        print("[TSL2561] configuration complete")
+        logging.debug("[TSL2561] configuration complete")
 
     def read(self):
-        print("[TSL2561] reading sensor")
+        logging.debug("[TSL2561] reading sensor")
 
         # Enable and read sensor
         self.sensor.enabled = True
@@ -34,12 +35,9 @@ class TSL2561(mqtt_methods.Mixin):
         self.sensor.enabled = False
 
         if lux is not None:
-            print("[TSL2561] Lux = {}".format(lux))
+            logging.debug("[TSL2561] Lux = {}".format(lux))
             return {
                 'light': round(lux, 2)
             }
         else:
-            print("[TSL2561] Lux value is None. Possible sensor underrange or overrange.")
-            return {
-                'light': None
-            }
+            raise Exception("[TSL2561] Lux value is None. Possible sensor underrange or overrange.")

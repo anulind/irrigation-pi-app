@@ -1,8 +1,9 @@
 import paho.mqtt.client as paho_client
 from config import MQTT_HOST, MQTT_PORT
+import logging
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    logging.info("Connected with result code "+str(rc))
     client.subscribe('pi/requests')
     client.subscribe('pi/abort')
 
