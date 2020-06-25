@@ -7,8 +7,11 @@ import logging
 
 pins = [
     {'pin': 9,  'name': 'pump1',           'output': True},
+    {'pin': 8, 'name': 'test1',           'output': True},
     {'pin': 11, 'name': 'pump2',           'output': True},
+    {'pin': 12, 'name': 'test2',           'output': True},
     {'pin': 13, 'name': 'pump3',           'output': True},
+    {'pin': 14, 'name': 'test3',           'output': True},
     {'pin': 15, 'name': 'pump4',           'output': True},
     {'pin': 7,  'name': 'watertank_empty', 'output': False},
     {'pin': 5,  'name': 'clk',             'output': False},

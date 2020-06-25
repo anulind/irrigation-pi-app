@@ -13,23 +13,21 @@ class TestMCP23017(unittest.TestCase):
         self.assertGreater(len(args), 2, "Please specify pin")
 
         pin = args[2]
-        print("Device ready, testing pin {}".format(pin))
 
-        if pin in ['pump1', 'pump2', 'pump3', 'pump4']:
-            self._pump(pin)
-        elif pin == 'watertank_empty':
-            self._watertank()
+        pin_number, pin_name = self.MCP23017.get_pin_info(pin)
+
+        print("Device ready, testing pin {} ({})".format(pin_name, pin_number))
+
+        output = self.MCP23017.pins_by_name[pin_name]['output']
+        if output:
+            self.MCP23017.set_value(pin_number, 1)
+            time.sleep(5)
+            self.MCP23017.set_value(pin_number, 0)
+        else:
+            status = self.MCP23017.read(pin_number)
+            print("Result: {}".format(status))
 
         self.MCP23017.disconnect()
-
-    def _pump(self, id):
-        self.MCP23017.set_value(id, 1)
-        time.sleep(5)
-        self.MCP23017.set_value(id, 0)
-
-    def _watertank(self):
-        status = self.MCP23017.read('watertank_empty')
-        print("Watertank empty: {}".format(status))
 
 if __name__ == '__main__':
     unittest.main()
