@@ -80,6 +80,9 @@ class MCP3008(mqtt_methods.Mixin):
         # Temperature conversion
         if pin_name == "temperature":
             value = self.convert_temperature(value)
+        # Convert soil moisture to percent
+        else:
+            value =round(value*100/1024, 1)
 
         logging.debug("[MCP3008] pin {} value = {}".format(pin_name, value))
 
