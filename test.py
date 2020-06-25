@@ -1,6 +1,13 @@
 import unittest
 import sys
 import importlib
+import logging
+from config import LOG_FORMAT
+
+logging.basicConfig(
+    format=LOG_FORMAT,
+    level=getattr(logging, 'DEBUG')
+)
 
 test = importlib.import_module("tests." + sys.argv[1])
 
