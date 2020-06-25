@@ -20,7 +20,7 @@ class Mixin:
 
         sensors = [
             'AM2320', 'BMP280', 'HCSR04', 'TSL2561',
-            {'device': 'MCP23017', 'pin': 'watertank_empty'},
+            {'device': 'MCP23017', 'pin': 'got_water'},
             {'device': 'MCP3008', 'pin': 'soil_moisture_1'},
             {'device': 'MCP3008', 'pin': 'soil_moisture_2'},
             {'device': 'MCP3008', 'pin': 'soil_moisture_3'},
