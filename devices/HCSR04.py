@@ -43,7 +43,7 @@ class HCSR04(mqtt_methods.Mixin):
             raise Exception("Got {} nonzero readings from HCSR04".format(len(result)))
 
         # Calculate average
-        value = sum(result)/len(result)
+        value = round(sum(result)/len(result), 1)
         logging.debug("[HCSR04] range = {}".format(value))
 
         return {

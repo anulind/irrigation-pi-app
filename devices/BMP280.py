@@ -21,6 +21,6 @@ class BMP280(mqtt_methods.Mixin):
         logging.debug("[BMP280] pressure = {}".format(pressure))
 
         return {
-            'temperature': round(temperature, 2),
-            'pressure': round(pressure, 2)
+            'temperature': round(temperature, 1),
+            'pressure': round(pressure, 1)
         }

@@ -89,4 +89,4 @@ class MCP3008(mqtt_methods.Mixin):
 
     def convert_temperature(self, value):
         rV = ((1024.0/value) - 1.0)*10000.0
-        return round(((1/(1.125614740E-03 + (2.346500768E-04*math.log(rV)) + (0.8600178326E-07*math.pow(math.log(rV), 3))))-273.15), 3)
+        return round(((1/(1.125614740E-03 + (2.346500768E-04*math.log(rV)) + (0.8600178326E-07*math.pow(math.log(rV), 3))))-273.15), 1)

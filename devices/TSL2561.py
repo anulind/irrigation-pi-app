@@ -37,7 +37,7 @@ class TSL2561(mqtt_methods.Mixin):
         if lux is not None:
             logging.debug("[TSL2561] Lux = {}".format(lux))
             return {
-                'light': round(lux, 2)
+                'light': round(lux, 1)
             }
         else:
             raise Exception("[TSL2561] Lux value is None. Possible sensor underrange or overrange.")
